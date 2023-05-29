@@ -7,8 +7,8 @@ import time
 from shutil import copyfile
 
 from selenium.common.exceptions import TimeoutException
-from torutils import TorController
-from visit import Visit
+from .torutils import TorController
+from .visit import Visit
 
 from helper import utils
 

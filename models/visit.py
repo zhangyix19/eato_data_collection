@@ -4,8 +4,8 @@ import os
 import sys
 import time
 
-from dumputils import Sniffer
-from torutils import TorBrowserDriver, TorController
+from .dumputils import Sniffer
+from .torutils import TorBrowserDriver, TorController
 
 from helper import utils
 

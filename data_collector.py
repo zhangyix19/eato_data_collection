@@ -56,12 +56,13 @@ if __name__ == '__main__':
         urls_closeworld_list = fp.read().splitlines()
 
     urls_openworld_list = []
-    assert os.path.isfile(urls_openworld)
-    assert urls_openworld
-    with open(urls_openworld, 'r') as fp:
-        urls_openworld_list = fp.read().splitlines()
-    for i in urls_closeworld_list:
-        urls_openworld_list.remove(i) if i in urls_openworld_list else None
+    if is_open_world:
+        assert os.path.isfile(urls_openworld)
+        assert urls_openworld
+        with open(urls_openworld, 'r') as fp:
+            urls_openworld_list = fp.read().splitlines()
+        for i in urls_closeworld_list:
+            urls_openworld_list.remove(i) if i in urls_openworld_list else None
 
     assert os.path.isdir(torrc_dir_path)
     torrc_paths = [os.path.join(torrc_dir_path, torrc_path) for torrc_path in os.listdir(torrc_dir_path)]
