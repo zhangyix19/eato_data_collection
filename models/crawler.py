@@ -119,7 +119,7 @@ class Crawler():
                         if line[0] not in conf:
                             conf[line[0]] = []
                         conf[line[0]].append(line[1])
-                conf['DataDirectory'] = [os.path.join(url_dir, "torlog")]
+                conf['DataDirectory'] = ['/root/.tor']
                 self.tor_controller.restart_tor(conf)
 
                 with open(os.path.join(url_dir, 'label'), 'w') as fp:
