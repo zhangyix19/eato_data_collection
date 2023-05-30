@@ -21,7 +21,7 @@ class Visit(object):
         self.visit_log_dir: str
         self.page_url = page_url
         self.url_dir = url_dir
-        self.tor_controller = tor_controller
+        # self.tor_controller = tor_controller
         self.tbb_path = tbb_path
         self.xvfb = xvfb
         self.screenshot = screenshot
@@ -61,8 +61,8 @@ class Visit(object):
             self.tb_driver.quit()
 
         # close all open streams to prevent pollution
-        print("INFO\tClose all open streams")
-        self.tor_controller.close_all_streams()
+        # print("INFO\tClose all open streams")
+        # self.tor_controller.close_all_streams()
         if self.xvfb:
             print("INFO\tStop xvfb")
             utils.stop_xvfb(self.xvfb_display)

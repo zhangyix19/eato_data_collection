@@ -152,9 +152,9 @@ class TorBrowserDriver(webdriver.Firefox, RemoteWebDriver):
         # self.profile.set_preference('extensions.torbutton.prompted_language', True)
 
         # configure Firefox to use Tor SOCKS proxy
-        self.profile.set_preference('network.proxy.type', 1)
-        self.profile.set_preference('network.proxy.socks', '127.0.0.1')
-        self.profile.set_preference('network.proxy.socks_port', utils.USED_SOCKS_PORT)
+        # self.profile.set_preference('network.proxy.type', 1)
+        # self.profile.set_preference('network.proxy.socks', '127.0.0.1')
+        # self.profile.set_preference('network.proxy.socks_port', utils.USED_SOCKS_PORT)
         if DISABLE_RANDOMIZEDPIPELINENING:
             self.profile.set_preference(
                 'network.http.pipelining.max-optimistic-requests', 5000)

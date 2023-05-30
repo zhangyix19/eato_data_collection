@@ -32,6 +32,7 @@ if __name__ == '__main__':
     parser.add_argument('--open_world_num', default=10000, type=int, help='open world num')
     parser.add_argument('--open_world_server_conf_path', default='', type=str, help='open_world_server_conf_path')
     parser.add_argument('--myexip', default='/root/myexip', type=str, help='path to myexip')
+    parser.add_argument('--http', action='store_true', help='use http instead of tor')
 
     args = parser.parse_args()
 
@@ -48,6 +49,7 @@ if __name__ == '__main__':
     open_world_num = args.open_world_num
     open_world_server_conf_path = args.open_world_server_conf_path
     myexip = args.myexip
+    use_http = args.http
 
     urls_closeworld_list = []
     assert os.path.isfile(urls_closeworld)
@@ -84,7 +86,7 @@ if __name__ == '__main__':
         open_world_end_index = 0
 
     crawler = Crawler(torrc_paths, urls_closeworld_list, urls_openworld_list, is_open_world, tbb_path,
-                      output, xvfb, screenshot, open_world_start_index, open_world_end_index)
+                      output, xvfb, screenshot, open_world_start_index, open_world_end_index, use_http)
     print('INFO\tInit crawler finish in {}'.format(utils.cal_now_time()))
     print("INFO\tCommand line parameters: %s" % sys.argv)
 
