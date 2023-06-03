@@ -33,7 +33,8 @@ def get_tor_bin_path(tor_path):
 
 
 def get_tbb_profile_path(tor_path):
-    profile_path = os.path.join('Browser', 'TorBrowser', 'Data', 'Browser', 'profile.default')
+    profile_path = os.path.join(
+        'Browser', 'TorBrowser', 'Data', 'Browser', 'profile.default')
     return os.path.join(tor_path, profile_path)
 
 
@@ -80,7 +81,8 @@ class TorController(object):
     def launch_tor_service(self, tor_config):
         """Launch Tor service and return the process."""
 
-        self.tmp_tor_data_dir = utils.clone_dir_with_timestap(get_tor_data_path(self.tbb_path))
+        self.tmp_tor_data_dir = utils.clone_dir_with_timestap(
+            get_tor_data_path(self.tbb_path))
         tor_binary = get_tor_bin_path(self.tbb_path)
         prepend_to_env_var("LD_LIBRARY_PATH", os.path.dirname(tor_binary))
 
@@ -88,17 +90,20 @@ class TorController(object):
 
         while True:
             try:
-                print('INFO\tTry to launch tor with stem in {}'.format(utils.cal_now_time()))
+                print('INFO\tTry to launch tor with stem in {}'.format(
+                    utils.cal_now_time()))
                 self.tor_process = stem.process.launch_tor_with_config(
                     config=tor_config,
                     tor_cmd=tor_binary,
                     timeout=utils.INTERVAL_WAIT_FOR_LAUNCH
                 )
-                print('INFO\tLaunch tor with stem finish in {}'.format(utils.cal_now_time()))
+                print('INFO\tLaunch tor with stem finish in {}'.format(
+                    utils.cal_now_time()))
                 self.controller = Controller.from_port()
                 print('INFO\tFinish from_port at {}'.format(utils.cal_now_time()))
                 self.controller.authenticate()
-                print('INFO\tFinish authenticate at {}'.format(utils.cal_now_time()))
+                print('INFO\tFinish authenticate at {}'.format(
+                    utils.cal_now_time()))
                 break
             except stem.SocketError as exc:
                 log.wl_log.critical("Unable to connect to tor on port %s: %s" %
@@ -139,10 +144,11 @@ class TorBrowserDriver(webdriver.Firefox, RemoteWebDriver):
                  tbb_path=None, DISABLE_RANDOMIZEDPIPELINENING=False):
         self.is_running = False
         self.tbb_path = tbb_path
-        prepend_to_env_var("LD_LIBRARY_PATH", os.path.dirname(get_tor_bin_path(tbb_path)))
+        prepend_to_env_var("LD_LIBRARY_PATH", os.path.dirname(
+            get_tor_bin_path(tbb_path)))
 
         # Initialize Tor Browser's profile
-        self.profile = self.init_tbb_profile()
+        self.profile = webdriver.FirefoxProfile()
 
         # set homepage to a blank tab
         self.profile.set_preference('browser.startup.page', "0")
@@ -178,14 +184,10 @@ class TorBrowserDriver(webdriver.Firefox, RemoteWebDriver):
         # upcoming versions of the Firefox Webdriver
         # https://w3c.github.io/webdriver/webdriver-spec.html#the-page-load-strategy
 
-        # prevent Tor Browser running it's own Tor process
-        self.profile.set_preference('extensions.torlauncher.start_tor', False)
-        self.profile.set_preference(
-            'extensions.torbutton.versioncheck_enabled', False)
         self.profile.set_preference('permissions.memory_only', False)
         self.profile.update_preferences()
         # Initialize Tor Browser's binary
-        self.binary = self.get_tbb_binary(logfile=tbb_logfile_path)
+        self.binary = FirefoxBinary()
 
         # Initialize capabilities
         self.mycapabilities = DesiredCapabilities.FIREFOX
@@ -211,31 +213,6 @@ class TorBrowserDriver(webdriver.Firefox, RemoteWebDriver):
             log.wl_log.error("Error connecting to Webdriver: %s" % e,
                              exc_info=True)
 
-    def get_tbb_binary(self, binary=None, logfile=None):
-        """Return FirefoxBinary pointing to the TBB's firefox binary."""
-        tbb_logfile = None
-        if not binary:
-            binary = get_tb_bin_path(self.tbb_path)
-        if logfile:
-            tbb_logfile = open(logfile, 'a+')
-
-        # in case you get an error for the unknown log_file, make sure your
-        # Selenium version is compatible with the Firefox version in TBB.
-        tbb_binary = FirefoxBinary(firefox_path=binary,
-                                   log_file=tbb_logfile)
-        return tbb_binary
-
-    def init_tbb_profile(self):
-        profile_directory = get_tbb_profile_path(self.tbb_path)
-        self.prof_dir_path = utils.clone_dir_with_timestap(profile_directory)
-        try:
-            tbb_profile = webdriver.FirefoxProfile(self.prof_dir_path)
-        except Exception:
-            log.wl_log.error("Error creating the TB profile", exc_info=True)
-            raise Exception("Error creating the TB profile")
-        else:
-            return tbb_profile
-
     def quit(self, _timeout=600):
         """
         Overrides the base class method cleaning the timestamped profile.
@@ -244,8 +221,6 @@ class TorBrowserDriver(webdriver.Firefox, RemoteWebDriver):
         utils.timeout(_timeout)
         self.is_running = False
         try:
-            log.wl_log.info("Quit: Removing profile dir")
-            shutil.rmtree(self.prof_dir_path)
             super(TorBrowserDriver, self).quit()
             utils.cancel_timeout()
         except CannotSendRequest:
