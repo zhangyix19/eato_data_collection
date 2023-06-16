@@ -15,14 +15,12 @@ sys.path.append('../..')
 class Visit(object):
     """Hold info about a particular visit to a page."""
 
-    def __init__(self, page_url: str, url_dir: str, tor_controller: TorController, tbb_path, xvfb: bool, screenshot: bool):
+    def __init__(self, page_url: str, url_dir: str, tor_controller: TorController, xvfb: bool, screenshot: bool):
         # load
         self.visit_dir: str
         self.visit_log_dir: str
         self.page_url = page_url
         self.url_dir = url_dir
-        # self.tor_controller = tor_controller
-        self.tbb_path = tbb_path
         self.xvfb = xvfb
         self.screenshot = screenshot
 
@@ -82,11 +80,11 @@ class Visit(object):
 
         utils.timeout(utils.HARD_VISIT_TIMEOUT)
 
-        print('INFO\tcapture start in {} path {}'.format(
+        # print('INFO\tcapture start in {} path {}'.format(
             utils.cal_now_time(), self.pcap_path))
-        self.sniffer.start_capture(
-            self.pcap_path,
-            f'tcp and host {utils.MY_IP}')
+        # self.sniffer.start_capture(
+        #     self.pcap_path,
+        #     f'tcp and host {utils.MY_IP}')
 
         try:
             self.tb_driver.set_page_load_timeout(utils.SOFT_VISIT_TIMEOUT)
