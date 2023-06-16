@@ -70,7 +70,8 @@ class Crawler():
 
         # Copy torrc
         for torrc_path in self.torrc_paths:
-            copyfile(torrc_path, os.path.join(self.crawl_dir, os.path.basename(torrc_path)))
+            copyfile(torrc_path, os.path.join(
+                self.crawl_dir, os.path.basename(torrc_path)))
 
         # Dump utils
         copyfile(utils.__file__, os.path.join(self.crawl_dir, "utils.py"))
@@ -84,7 +85,8 @@ class Crawler():
         # Dump urllist
         with open(os.path.join(self.crawl_dir, "urls-crawled.csv"), 'w') as f:
             if self.open_world:
-                [f.write(i+'\n') for i in self.urls_openworld[self.open_world_start_index:self.open_world_end_index]]
+                [f.write(
+                    i+'\n') for i in self.urls_openworld[self.open_world_start_index:self.open_world_end_index]]
             else:
                 [f.write(i+'\n') for i in self.urls_closeworld]
 
@@ -97,36 +99,22 @@ class Crawler():
               (num_batches, len(url_list), self.crawl_dir))
 
         for batch_num in range(num_batches):
-            print("INFO\tStarting batch {} in {}".format(batch_num, utils.cal_now_time()))
+            print("INFO\tStarting batch {} in {}".format(
+                batch_num, utils.cal_now_time()))
             site_num = 0
-            batch_dir = utils.create_dir(os.path.join(self.crawl_dir, 'batch-'+str(batch_num)))
+            batch_dir = utils.create_dir(os.path.join(
+                self.crawl_dir, 'batch-'+str(batch_num)))
 
             # sites_crawled_with_same_proc = 0
             random.shuffle(url_list)
             for page_url in url_list:
-                print('INFO\tCrawling {} url: {} in {}'.format(site_num, page_url, utils.cal_now_time()))
-                url_dir = utils.create_dir(os.path.join(batch_dir, 'url-'+str(site_num)))
-                # print("INFO\tRestarting Tor in {}".format(utils.cal_now_time()))
-                # activate_torrc_path = random.choice(self.torrc_paths)
-                # analyse torrc
-                # assert os.path.isfile(activate_torrc_path), "Invalid torrc path{}".format(activate_torrc_path)
-                # with open(activate_torrc_path, 'r') as f:
-                #     lines = f.readlines()
-                #     lines = [line.strip().split(' ', 1) for line in lines]
-                #     lines = [line for line in lines if len(line) == 2]
-                #     conf = {}
-                #     conf = {line[0]: line[1] for line in conf if line[0]}
-                #     for line in lines:
-                #         if line[0] not in conf:
-                #             conf[line[0]] = []
-                #         conf[line[0]].append(line[1])
-                # conf['DataDirectory'] = ['/root/.tor']
-                # self.tor_controller.restart_tor(conf)
+                print('INFO\tCrawling {} url: {} in {}'.format(
+                    site_num, page_url, utils.cal_now_time()))
+                url_dir = utils.create_dir(
+                    os.path.join(batch_dir, 'url-'+str(site_num)))
 
                 with open(os.path.join(url_dir, 'label'), 'w') as fp:
                     fp.write(page_url+'\n')
-                # with open(os.path.join(url_dir, 'torrc_path'), 'w') as fp:
-                #     fp.write(activate_torrc_path+'\n')
 
                 self.visit = None
                 try:
@@ -140,10 +128,7 @@ class Crawler():
                     with open(os.path.join(url_dir, 'time'), 'w') as fp:
                         fp.write(f'{start_time}\n')
                         fp.write(f'{end_time}\n')
-                    # delete chched files
-                    # for filename in os.listdir(os.path.join(url_dir, "torlog")):
-                    #     if "cached" in filename:
-                    #         os.remove(os.path.join(url_dir, "torlog", filename))
+
                 except KeyboardInterrupt:  # CTRL + C
                     raise KeyboardInterrupt
                 except TimeoutException as exc:
@@ -163,7 +148,6 @@ class Crawler():
         print("Stopping crawl...")
         if self.visit:
             self.visit.cleanup_visit()
-        # self.tor_controller.kill_tor_proc()
 
 
 if __name__ == "__main__":

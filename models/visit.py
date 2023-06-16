@@ -35,8 +35,7 @@ class Visit(object):
             self.xvfb_display = utils.start_xvfb()
 
         # Create new instance of TorBrowser driver
-        self.tb_driver = TorBrowserDriver(
-            tbb_logfile_path=os.path.join(self.visit_dir, "logs", "firefox.log"), tbb_path=self.tbb_path)
+        self.tb_driver = TorBrowserDriver()
 
         self.sniffer = Sniffer()  # sniffer to capture the network traffic
 
@@ -60,9 +59,6 @@ class Visit(object):
             print("INFO\tQuitting selenium driver...")
             self.tb_driver.quit()
 
-        # close all open streams to prevent pollution
-        # print("INFO\tClose all open streams")
-        # self.tor_controller.close_all_streams()
         if self.xvfb:
             print("INFO\tStop xvfb")
             utils.stop_xvfb(self.xvfb_display)
@@ -72,10 +68,12 @@ class Visit(object):
             if 'http://' in url or 'https://' in url:
                 url = url.split('//')[1]
             out_png = os.path.join(self.visit_dir, '{}.png'.format(url))
-            print("INFO\tTaking screenshot of %s to %s" % (self.page_url, out_png))
+            print("INFO\tTaking screenshot of %s to %s" %
+                  (self.page_url, out_png))
             self.tb_driver.get_screenshot_as_file(out_png)
         except:
-            print("ERROE\tException while taking screenshot of: %s" % self.page_url)
+            print("ERROE\tException while taking screenshot of: %s" %
+                  self.page_url)
             return False
         return True
 
@@ -84,7 +82,8 @@ class Visit(object):
 
         utils.timeout(utils.HARD_VISIT_TIMEOUT)
 
-        print('INFO\tcapture start in {} path {}'.format(utils.cal_now_time(), self.pcap_path))
+        print('INFO\tcapture start in {} path {}'.format(
+            utils.cal_now_time(), self.pcap_path))
         self.sniffer.start_capture(
             self.pcap_path,
             f'tcp and host {utils.MY_IP}')
@@ -101,11 +100,12 @@ class Visit(object):
             newTab = 'window.open("%s");' % page_url
         else:
             newTab = 'window.open("https://%s");' % page_url
-        print('INFO\tCrawling URL: {} in {}'. format(page_url, utils.cal_now_time()))
+        print('INFO\tCrawling URL: {} in {}'. format(
+            page_url, utils.cal_now_time()))
         self.tb_driver.execute_script(newTab)
         self.tb_driver.switch_to.window(self.tb_driver.window_handles[-1])
 
-        time.sleep(utils.WAIT_FOR_VISIT) if not '.onion' in page_url else time.sleep(utils.WAIT_FOR_VISIT_ONION)
+        time.sleep(utils.WAIT_FOR_VISIT)
         print('INFO\tEnd crawling url in {}'.format(utils.cal_now_time()))
 
         if self.screenshot:
